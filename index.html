@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Time Card Calculator v1</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.min.js" integrity="sha512-HLbtvcctT6uyv5bExN/qekjQvFIl46bwjEq6PBvFogNfZ0YGVE+N3w6L+hGaJsGPWnMcAQ2qK8Itt43mGzGy8Q==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js" integrity="sha512-vv3EN6dNaQeEWDcxrKPFYSFba/kgm//IUnvLPMPadaUf5+ylZyx4cKxuc4HdBf0PPAlM7560DV63ZcolRJFPqA==" crossorigin="anonymous"></script>
+    
+    <!-- Custom styles for this template -->
+    <link href="main.css" rel="stylesheet">
+  </head>
+  <body class="">
+    
+    <div class="container-xl">
+      <main>
+        <div class="py-2 text-center">
+          <img class="d-block my-4" src="my-hours-logo.png" alt="My Hours Time tracking" width="24" height="25">
+        </div>
+
+        <form method="post" id="main-form" enctype="application/x-www-form-urlencoded">
+
+          <div class="row">
+            <div class="col-5">
+              <label for="title" class="form-label"><b>Your name or title</b></label>
+              <input type="text" class="form-control" id="title" placeholder="" value="" autofocus>
+            </div>
+            <div class="col-3">
+              <label for="date" class="form-label">Dates</label>
+              <input type="text" class="form-control" id="date" name="dates" placeholder="" value="">
+            </div>
+            <div class="col-2">
+              <div class="form-check form-switch mt-3 py-3">
+                <input class="form-check-input" type="checkbox" id="time-format" name="time-format">
+                <label class="form-check-label" for="time-format">24h time format</label>
+              </div>
+            </div>
+            <div class="col-2">
+              <div class="form-check form-switch mt-3 py-3  ">
+                <input class="form-check-input" type="checkbox" id="break-setting" name="break-setting">
+                <label class="form-check-label" for="break-setting">Add breaks</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- TABLE HEADER ROW -->
+
+          <div class="row table-header py-1 mt-5 justify-content-between"> 
+            <div class="col-2">DAY</div>
+            <div class="col-4 first-column responsive">
+              <div class="row">
+                <div class="col">FROM</div>
+                <div class="col">TO</div>              
+              </div>
+            </div>
+            <div class="col-4 second-column">
+              <div class="row">
+                <div class="col">FROM</div>
+                <div class="col">TO</div>              
+              </div>
+            </div>
+            <div class="col-2 text-end">TOTAL</div>
+          </div>
+
+          <!-- TABLE ROW 1 - MONDAY -->
+          <div id="timesheet">
+            <div class="row table-row d-flex align-items-center justify-content-between" id="monday">  
+              <div class="col-2"><label class="week-days"><b>Monday</b></label></div>
+              <div class="col-4 first-column responsive">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-1" placeholder="8:30" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-1" name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-1" placeholder="11:15" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-1" name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 second-column ">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-2" placeholder="11:30" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-2"  name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-2" placeholder="12:50" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-2"  name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>   
+                </div>              
+              </div>
+              <div class="col-2 text-end total-column">
+                <span class="text-secondary">0:00</span>
+                <input type="hidden" name="total">
+              </div>
+
+              <div class="col-8 mt-2 mb-2 mx-auto description-hidden">
+                <input type="text" class="form-control description" placeholder="Notes..." value="">
+              </div>
+            </div>
+
+            <!-- TABLE ROW 1 - TUESDAY -->
+
+            <div class="row table-row d-flex align-items-center justify-content-between" id="tuesday">  
+              <div class="col-2"><label class="week-days"><b>tuesday</b></label></div>
+              <div class="col-4 first-column responsive">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-1" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-1" name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-1" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-1" name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 second-column">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-2" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-2"  name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-2" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-2"  name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>   
+                </div>              
+              </div>
+              <div class="col-2 text-end total-column">
+                <span class="text-secondary">0:00</span>
+                <input type="hidden" name="total">
+              </div>
+
+              <div class="col-8 mt-2 mb-2 mx-auto description-hidden">
+                <input type="text" class="form-control description" placeholder="Notes..." value="">
+              </div>
+            </div>
+
+            <!-- TABLE ROW 1 - WEDNESDAY -->
+
+            <div class="row table-row d-flex align-items-center justify-content-between" id="wednesday">  
+              <div class="col-2"><label class="week-days"><b>wednesday</b></label></div>
+              <div class="col-4 first-column responsive">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-1" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-1" name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-1" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-1" name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 second-column">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-2" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-2"  name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-2" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-2"  name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>   
+                </div>              
+              </div>
+              <div class="col-2 text-end total-column">
+                <span class="text-secondary">0:00</span>
+                <input type="hidden" name="total">
+              </div>
+
+              <div class="col-8 mt-2 mb-2 mx-auto description-hidden">
+                <input type="text" class="form-control description" placeholder="Notes..." value="">
+              </div>
+            </div>
+
+            <!-- TABLE ROW 1 - THURSDAY -->
+
+             <div class="row table-row d-flex align-items-center justify-content-between" id="thursday">  
+              <div class="col-2"><label class="week-days"><b>thursday</b></label></div>
+              <div class="col-4 first-column responsive">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-1" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-1" name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-1" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-1" name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 second-column">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-2" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-2"  name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-2" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-2"  name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>   
+                </div>              
+              </div>
+              <div class="col-2 text-end total-column">
+                <span class="text-secondary">0:00</span>
+                <input type="hidden" name="total">
+              </div>
+
+              <div class="col-8 mt-2 mb-2 mx-auto description-hidden">
+                <input type="text" class="form-control description" placeholder="Notes..." value="">
+              </div>
+            </div>
+
+            <!-- TABLE ROW 1 - FRIDAY -->
+
+             <div class="row table-row d-flex align-items-center justify-content-between" id="friday">  
+              <div class="col-2"><label class="week-days"><b>friday</b></label></div>
+              <div class="col-4 first-column responsive">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-1" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-1" name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-1" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-1" name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 second-column">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-2" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-2"  name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-2" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-2"  name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>   
+                </div>              
+              </div>
+              <div class="col-2 text-end total-column">
+                <span class="text-secondary">0:00</span>
+                <input type="hidden" name="total">
+              </div>
+
+              <div class="col-8 mt-2 mb-2 mx-auto description-hidden">
+                <input type="text" class="form-control description" placeholder="Notes..." value="">
+              </div>
+            </div>
+
+            <!-- TABLE ROW 1 - SATURDAY -->
+
+            <div class="row table-row align-items-center justify-content-between weekend-hidden" id="saturday">  
+              <div class="col-2"><label class="week-days"><b>saturday</b></label></div>
+              <div class="col-4 first-column responsive">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-1" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-1" name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-1" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-1" name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 second-column">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-2" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-2"  name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-2" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-2"  name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>   
+                </div>              
+              </div>
+              <div class="col-2 text-end total-column">
+                <span class="text-secondary">0:00</span>
+                <input type="hidden" name="total">
+              </div>
+
+              <div class="col-8 mt-2 mb-2 mx-auto description-hidden">
+                <input type="text" class="form-control description" placeholder="Notes..." value="">
+              </div>
+            </div>
+
+            <!-- TABLE ROW 1 - SUNDAY -->
+
+             <div class="row table-row align-items-center justify-content-between weekend-hidden" id="sunday">  
+              <div class="col-2"><label class="week-days"><b>sunday</b></label></div>
+              <div class="col-4 first-column responsive">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-1" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-1" name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-1" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-1" name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 second-column">
+                <div class="row">
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="from-2" value="" name="from">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-from-2"  name="from-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row g-1">
+                      <div class="col">
+                        <input type="text" class="form-control" id="to-2" value="" name="to">
+                      </div>
+                      <div class="col">
+                        <select class="form-select ampm-select" id="ampm-to-2"  name="to-ampm">
+                          <option value="am">AM</option>
+                          <option value="pm" selected="">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>   
+                </div>              
+              </div>
+              <div class="col-2 text-end total-column">
+                <span class="text-secondary">0:00</span>
+                <input type="hidden" name="total">
+              </div>
+
+              <div class="col-8 mt-2 mb-2 mx-auto description-hidden">
+                <input type="text" class="form-control description" placeholder="Notes..." value="">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <a href="#" class="btn btn-link text-danger px-0" id="clear">Clear timesheet</a>
+            </div>
+          </div>
+
+          
+          <!-- TABLE ROW FOOTER - SETTINGS -->
+
+          <div class="row table-row settings mt-2 pt-4">   
+            <div class="col-lg-3 px-4" id="pay">
+              <div class="mb-3">
+                <select class="form-select w-100" id="rate" name="rate" required>
+                  <option value="norate" selected>No hourly rate</option>
+                  <option value="display">Set hourly rate</option>
+                </select>
+              </div>
+              <div class="input-group rate-hidden">
+                <input type="text" class="form-control" name="currency" placeholder="currency" value="$">
+                <input type="text" class="form-control w-50" name="hourly-rate" placeholder="e.g. 50.0" value="">
+                <span class="input-group-text">per hour</span>
+              </div>
+            </div>
+            <div class="col-lg-3 px-4" id="absence">
+              <div class="mb-3">
+                <select class="form-select w-100" id="absence" name="absence" required>
+                  <option value="noabsence" selected>No absence</option>
+                  <option value="display">Add absence</option>
+                </select>
+              </div>
+              <div class="row absence-hidden mb-2">
+                <div class="col-8">
+                  <div class="input-group">
+                    <input type="text" class="form-control w-25" name="absence-hours" placeholder="e.g. 8:00" value="">
+                    <span class="input-group-text">hours</span>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="form-check pt-1">
+                    <input type="checkbox" class="form-check-input" id="paid-absence" name="paid-absence">
+                    <label class="form-check-label" for="paid-absence">Paid?</label>
+                  </div>
+                </div>
+              </div>
+              <div class="absence-hidden">
+                <input type="text" class="form-control" name="description" placeholder="Type of absence..." value="">
+              </div>
+            </div>
+            <div class="col-lg-3 px-4" id="overtime">
+              <div class="mb-3">
+                <select class="form-select w-100" id="overtime" name="overtime" required>
+                  <option value="noovertime" selected>No overtime</option>
+                  <option value="display">Set overtime</option>
+                </select>
+              </div>
+              <div class="input-group overtime-hidden mb-2">
+                <input type="text" class="form-control" name="rate-multiply" placeholder="times" value="1.5">
+                <span class="input-group-text">x hourly rate, after </span>
+                <input type="text" class="form-control" name="after-hours" placeholder="e.g. 8" value="8:00">
+              </div>
+              <div class="overtime-hidden">
+                <select class="form-select w-100" name="overtime-setting">
+                  <option value="day" selected>hours per day</option>
+                  <option value="week">hours per week</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-3 px-4" id="advanced">
+              <div class="mb-3">
+                <select class="form-select w-100" id="advanced" name="advanced" required>
+                  <option value="noadvanced" selected>No advanced settings</option>
+                  <option value="display">Set advanced settings</option>
+                </select>
+              </div>
+              <div class="advanced-hidden row">  
+                <div class="col-12">                            
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="weekend-setting" name="weekend-setting">
+                    <label class="form-check-label" for="weekend-setting">Show weekend</label>
+                  </div>  
+                </div>  
+                <!--            
+                <div class="col-12">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="description-setting" name="description-setting">
+                    <label class="form-check-label" for="description-setting">Daily description</label>
+                  </div>
+                </div>
+              -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TABLE ROW FOOTER - TOTALS -->
+
+          <div class="row table-row mt-3 border-top pt-4  pb-1 align-items-center" id="totals">   
+            <div class="col-2">
+                <h4>Total</h4>
+            </div>
+
+            <div class="col-6">
+              
+            </div>  
+            <div class="col-2 text-end text-secondary" id="total-pay">
+              <div class="rate-hidden justify-content-end">
+                <h4 class="">Pay: 0.00</h4>
+              </div>
+            </div>
+
+            <div class="col-2 text-end" id="total-hours">
+              <h4>Hours: 0:00</h4>
+            </div>
+          </div>
+
+          <!-- TABLE ROW FOOTER - OVERTIME TOTALS -->
+
+          <div class="row table-row pt-1 pb-3 align-items-center overtime-hidden" id="overtime-totals">   
+            <div class="col-2">
+                <h5>Overtime</h5>
+            </div>
+
+            <div class="col-6">
+              
+            </div>  
+            <div class="col-2 text-end text-secondary" id="overtime-pay">
+              <h6>Regular pay: 0.00 <br>Overtime pay: 0.00</h6>
+            </div>
+
+            <div class="col-2 text-end" id="overtime-hours">
+              <h6>Regular hours: 0:00<br>Overtime hours: 0:00 </h6>
+            </div>
+          </div>
+
+          <!-- TABLE ROW FOOTER - BUTTONS -->
+
+          <div class="row mt-5 justify-content-between">
+            <div class="col-4">
+              <div class="  ">
+                <div class="input-group mb-3">
+                  <span class="input-group-text">URL</span>
+                  <input type="text" class="form-control" name="submit-url" id="submit-url" placeholder="https://webhookurl.com/123446" value="">
+                </div>
+                <button type="" class="btn btn-outline-primary" id="send"><i class="bi bi-box-arrow-in-right"></i>&nbsp; Submit to URL</button>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="row">
+                <div class="col-12">
+                  <div class="d-grid">
+                    <button type="submit" class="btn btn-primary" id="calculate"><i class="bi bi-calculator"></i> Calculate</button>
+                  </div>
+                </div>
+                <div class="col-12 mt-3">
+                  <div class="d-grid">
+                    <button type="" class="btn btn-success" id="print"><i class="bi bi-file-earmark-arrow-down"></i> Download as PDF</button>
+                  </div>
+                </div>
+              </div>              
+            </div>
+          </div>
+        </form>
+
+      </main>
+
+      <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; 2021 Spica International</p>
+        <ul class="list-inline">
+          <li class="list-inline-item"><a href="#">Terms & Privacy</a></li>
+          <li class="list-inline-item"><a href="#">Support</a></li>
+        </ul>
+      </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.4/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.4/plugin/customParseFormat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.4/plugin/duration.js"></script>
+
+    <script src="main.js"></script>
+  </body>
+</html>

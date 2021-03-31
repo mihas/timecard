@@ -1,0 +1,94 @@
+label {
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+label.week-days {
+	font-size: 1.1rem
+}
+
+input.description {
+	width: 98%;
+}
+
+.table-header {
+	font-size: 0.9rem;
+	color:#666;
+}
+
+.table-row {
+	font-size: 1.2rem;
+	color:#444;
+	margin-top:1rem;
+	margin-bottom:1rem;
+}
+
+.table-row .form-select {
+	width:80%;
+	padding: .375rem 0.5rem .375rem .3rem;
+	background-position: right 0.3rem center; 
+}
+
+.form-check-input {
+	margin-top:0.35rem;
+}
+
+.absence-hidden, .overtime-hidden, .description-hidden, .advanced-hidden, .weekend-hidden {
+	display: none;
+}
+
+@media only screen and (max-width: 1000px) {
+	.col-4.first-column.responsive {
+		width: 50%;
+	}
+}
+
+.second-column {
+	display: none;
+}
+
+.settings select.w-100 {
+	border-radius: 0;
+	border-top: none;
+	border-right: none;
+	border-left: none; 
+}
+
+/* BOOTSTRAP OVERRIDES */
+
+a {
+	color: #3B8FC2;
+}
+
+.btn-primary {
+	background-color: #3B8FC2;
+	border-color: #3B8FC2;
+}
+
+.btn-primary:hover, .btn-primary:active {
+	background-color: #296487;
+	border-color: #296487;	
+} 
+
+.btn-outline-primary {
+	border-color: #3B8FC2;
+	color: #3B8FC2;
+}
+
+.btn-outline-primary:hover, .btn-primary:active {
+	background-color: #3B8FC2;
+	border-color: #3B8FC2;	
+} 
+
+.btn-success {
+	border-color: #2DB67E;
+	background-color: #2DB67E;
+}
+
+.btn-success:hover, .btn-success:active {
+	background-color: #2DB67E;
+	border-color: #2DB67E;	
+}
+
+
