@@ -134,19 +134,21 @@ $(function () {
 
   // Set rate & overtime via URL
 
-  function setRateViaURL(setting, urlVal, settingSelect) {
+  function setValueViaURL(setting, urlVal, settingSelect=null) {
     if (typeof(urlVal) === "string") {
       setting.val(urlVal);
-      settingSelect.val("display").change();
+      if (settingSelect != null) {
+        settingSelect.val("display").change();
+      }
     }
   }
 
-  setRateViaURL($('#pay input[name="hourly-rate"]'), searchParams.get("hourly_rate"), rateSetting);
-  setRateViaURL($('#pay input[name="currency"]'), searchParams.get("currency"), rateSetting);
-  setRateViaURL($('#overtime input[name="after-hours"]'), searchParams.get("overtime_hours"), overtimeSetting);
-  setRateViaURL($('#overtime input[name="multiply"]'), searchParams.get("overtime_rate"), overtimeSetting);
-  setRateViaURL($('#overtime input[name="overtime-setting"]'), searchParams.get("overtime_setting"), overtimeSetting);
-  setRateViaURL($('input[name="submit-url"]'), searchParams.get("submit_url"), advancedSetting);
+  setValueViaURL($('#pay input[name="hourly-rate"]'), searchParams.get("hourly_rate"), rateSetting);
+  setValueViaURL($('#pay input[name="currency"]'), searchParams.get("currency"), rateSetting);
+  setValueViaURL($('#overtime input[name="after-hours"]'), searchParams.get("overtime_hours"), overtimeSetting);
+  setValueViaURL($('#overtime input[name="multiply"]'), searchParams.get("overtime_rate"), overtimeSetting);
+  setValueViaURL($('#overtime input[name="overtime-setting"]'), searchParams.get("overtime_setting"), overtimeSetting);
+  setValueViaURL($('input[name="submit-url"]'), searchParams.get("submit_url"));
 
   if (searchParams.get("submit_url")) {
     $('input[name="submit-url"]').prop("disabled", true);
