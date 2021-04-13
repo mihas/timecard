@@ -30,6 +30,22 @@ input.description {
 	background-position: right 0.3rem center; 
 }
 
+@media only screen and (max-width: 900px) {
+	.table-row .form-select {
+		width:100%;
+		background-image: none;
+	}
+
+	.table-row .form-control {
+		width:120%;
+	}
+
+	.form-switch {
+		margin-top:0 !important;
+		padding-bottom: 0 !important; 
+	}
+}
+
 .form-check-input {
 	margin-top:0.35rem;
 }
@@ -38,9 +54,9 @@ input.description {
 	display: none;
 }
 
-@media only screen and (max-width: 1000px) {
-	.col-4.first-column.responsive {
-		width: 50%;
+@media only screen and (max-width: 768px) {
+	.first-column.responsive {
+		width: 80%;
 	}
 }
 

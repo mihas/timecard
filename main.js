@@ -25,7 +25,7 @@ $(function () {
   var weekendInputs = $('.weekend-hidden');
 
   function setSettingsViaURL(setting, urlVal) {
-    if (typeof(urlVal) === "boolean") {
+    if (urlVal === true) {
       setting.prop("checked", urlVal);
     }
   }
@@ -523,7 +523,8 @@ $(function () {
             widths: widths,
             body: timesheetPrint
           }
-        }
+        },
+        { text: "Made with My Hours timesheet", link: "https://myhours.com/timesheet-time-tracking", style: "backlink"}
       ],
       styles: {
         header: {
@@ -575,6 +576,12 @@ $(function () {
           bold: true,
           lineHeight: 1.2,
           color: "#296487"
+        },
+        backlink: {
+          fontSize: 9,
+          margin: [0, 50, 0, 10],
+          color: "#3B8FC2",
+          alignment: "right"
         }
       }
     }
