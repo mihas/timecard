@@ -4,13 +4,9 @@ $(function () {
 
   dayjs.extend(window.dayjs_plugin_customParseFormat);
   dayjs.extend(window.dayjs_plugin_duration);
-
-  var searchParams = new URLSearchParams(window.location.search)
-  var lockSettings = searchParams.get("lock_settings") === "true"
-
   var weekDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
-  // Show/hide am/pm select inputs based on selected Time format.
+  // Set options based on pre-selected settings
 
   var timeFormatSetting = $('input[id="time-format"]');
   var ampmSelectors = $('.ampm-select');
@@ -24,6 +20,10 @@ $(function () {
   var weekendSetting = $('input[id="weekend-setting"]');
   var weekendInputs = $('.weekend-hidden');
 
+  
+  // Set options based on URL parameters
+  var searchParams = new URLSearchParams(window.location.search)
+
   function setSettingsViaURL(setting, urlVal) {
     if (urlVal === true) {
       setting.prop("checked", urlVal);
@@ -33,11 +33,15 @@ $(function () {
   setSettingsViaURL(timeFormatSetting, searchParams.get("24h_format") === "true");
   setSettingsViaURL(breakSetting, searchParams.get("add_breaks") === "true");
   setSettingsViaURL(weekendSetting, searchParams.get("show_weekend") === "true");
+  
 
+  // Disable changing an input that is set via URL
+  var lockSettings = searchParams.get("lock_settings") === "true"
   if (lockSettings) {
     $(".lockable-input").prop("disabled", lockSettings);
   }
 
+  // Prepare variables for default options
   var isAmPm = timeFormatSetting.prop("checked") == false;
   var noBreaks = breakSetting.prop("checked") == false;
   var noWeekends = weekendSetting.prop("checked") == false;
@@ -61,11 +65,10 @@ $(function () {
   }
 
   toggleChecked(timeFormatSetting.prop("checked"), ampmSelectors);
-  //toggleChecked(descSetting.prop("checked") == false, descInputs);
   toggleChecked(weekendSetting.prop("checked") == false, weekendInputs, true);
-
   toggleChecked(breakSetting.prop("checked") == false, breakInputs);
   toggleResponsive(noBreaks);
+  //toggleChecked(descSetting.prop("checked") == false, descInputs);
 
   timeFormatSetting.on("change", function() {
     toggleChecked($(this).prop("checked"), ampmSelectors);
@@ -78,15 +81,16 @@ $(function () {
     toggleResponsive(noBreaks);
   });
 
-  descSetting.on("change", function() {
-    //toggleChecked($(this).prop("checked") == false, descInputs);
-  });  
-
   weekendSetting.on("change", function() {
     toggleChecked($(this).prop("checked") == false, weekendInputs, true);
     noWeekends = weekendSetting.prop("checked") == false;
-  });  
+  }); 
 
+  /*
+  descSetting.on("change", function() {
+    toggleChecked($(this).prop("checked") == false, descInputs);
+  });  
+  */ 
 
   // Show/hide rate, overtime and absence settings based on selected preferences
 
@@ -99,41 +103,10 @@ $(function () {
   var overtimeSetting = $('select[id="overtime"]');
   var overtimeInputs = $('.overtime-hidden');
 
-  var advancedSetting = $('select[id="advanced"]');
-  var advancedInputs = $('.advanced-hidden');
-
-
-  function toggleSettings(val, inputs) {
-    if (val == "display") {
-      inputs.css({"display": "flex"});
-    } else {
-      inputs.hide();
-    }
-  }
-
-  toggleSettings(rateSetting[0].value, rateInputs);
-  toggleSettings(absenceSetting[0].value, absenceInputs);
-  toggleSettings(overtimeSetting[0].value, overtimeInputs);
-  toggleSettings(advancedSetting[0].value, advancedInputs);
-
-  rateSetting.on("change", function() {
-    toggleSettings(this.value, rateInputs);
-  });
-
-  absenceSetting.on("change", function() {
-    toggleSettings(this.value, absenceInputs);
-  });
-
-  overtimeSetting.on("change", function() {
-    toggleSettings(this.value, overtimeInputs);
-  });
-
-  advancedSetting.on("change", function() {
-    toggleSettings(this.value, advancedInputs);
-  });
+  //var advancedSetting = $('select[id="advanced"]');
+  //var advancedInputs = $('.advanced-hidden');
 
   // Set rate & overtime via URL
-
   function setValueViaURL(setting, urlVal, settingSelect=null) {
     if (typeof(urlVal) === "string") {
       setting.val(urlVal);
@@ -147,12 +120,44 @@ $(function () {
   setValueViaURL($('#pay input[name="currency"]'), searchParams.get("currency"), rateSetting);
   setValueViaURL($('#overtime input[name="after-hours"]'), searchParams.get("overtime_hours"), overtimeSetting);
   setValueViaURL($('#overtime input[name="multiply"]'), searchParams.get("overtime_rate"), overtimeSetting);
-  setValueViaURL($('#overtime input[name="overtime-setting"]'), searchParams.get("overtime_setting"), overtimeSetting);
+  setValueViaURL($('#overtime select[name="overtime-setting"]'), searchParams.get("overtime_setting"), overtimeSetting);
   setValueViaURL($('input[name="submit-url"]'), searchParams.get("submit_url"));
 
   if (searchParams.get("submit_url")) {
     $('input[name="submit-url"]').prop("disabled", true);
   }
+
+  function toggleSettings(val, inputs) {
+    if (val == "display") {
+      inputs.css({"display": "flex"});
+    } else {
+      inputs.hide();
+    }
+  }
+
+  toggleSettings(rateSetting[0].value, rateInputs);
+  toggleSettings(absenceSetting[0].value, absenceInputs);
+  toggleSettings(overtimeSetting[0].value, overtimeInputs);
+  //toggleSettings(advancedSetting[0].value, advancedInputs);
+
+  rateSetting.on("change", function() {
+    toggleSettings(this.value, rateInputs);
+  });
+
+  absenceSetting.on("change", function() {
+    toggleSettings(this.value, absenceInputs);
+  });
+
+  overtimeSetting.on("change", function() {
+    toggleSettings(this.value, overtimeInputs);
+  });
+
+  /* advancedSetting.on("change", function() {
+    toggleSettings(this.value, advancedInputs);
+  });
+  */
+
+
 
   // Init Datepicker
 
@@ -175,14 +180,10 @@ $(function () {
     selectedStartWeek = picker.startDate._d;
   });
 
-  // Calculate totals
-  // [DONE] 1. Set calendar days first day of the week --> last day of the week
-  // 2. Set from/to values as dateTimes, include Ampm input. Calculate duration from them.
-  // 3. Add duration to total columns
-  // 4. Multiply with pay rate
-  // 5. Calculate overtime: how many hours each day (week?) x new pay rate.
-  // 6. Sum up all totals
+  // -- Calculate totals --
 
+  // Params: date (date obj), time (string), ampm (string).
+  // Return: date object with the correct timestamp
   function addTimeToDate(date, time, ampm) {
     // If no time is provided, return null.
     if (time === undefined || time === "") {
@@ -216,11 +217,13 @@ $(function () {
     return Math.round(duration.asHours() * rate * multiply * 100) / 100; // round to 2 decimal places
   }
 
+  // Params: duration string; Return: dayjs duration object
   function parseDuration(time) {
     var timeSplitted = time.split(":");
     return dayjs.duration({h: (timeSplitted[0] || 0), m: (timeSplitted[1] || 0)})
   }
 
+  // Params: dayjs duration obj; Return: time string in HH:mm format
   function getTotalHours(duration) {
     var h = Math.floor(duration.asHours());
     var m = Math.floor(duration.asMinutes()%60);
@@ -524,7 +527,7 @@ $(function () {
             body: timesheetPrint
           }
         },
-        { text: "Made with My Hours timesheet", link: "https://myhours.com/timesheet-time-tracking", style: "backlink"}
+        { text: "Made with My Hours time card", link: "https://myhours.com/timesheet-time-tracking", style: "backlink"}
       ],
       styles: {
         header: {
@@ -586,7 +589,7 @@ $(function () {
       }
     }
 
-    pdfMake.createPdf(dd).open();
+    pdfMake.createPdf(dd).download("timecard_"+dayjs().format("YYYY-MM-DD"));
 
     e.preventDefault();
   });

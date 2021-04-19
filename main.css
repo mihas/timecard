@@ -30,7 +30,7 @@ input.description {
 	background-position: right 0.3rem center; 
 }
 
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 992px) {
 	.table-row .form-select {
 		width:100%;
 		background-image: none;
@@ -44,6 +44,8 @@ input.description {
 		margin-top:0 !important;
 		padding-bottom: 0 !important; 
 	}
+
+	
 }
 
 .form-check-input {
