@@ -121,10 +121,10 @@ $(function () {
   setValueViaURL($('#overtime input[name="after-hours"]'), searchParams.get("overtime_hours"), overtimeSetting);
   setValueViaURL($('#overtime input[name="multiply"]'), searchParams.get("overtime_rate"), overtimeSetting);
   setValueViaURL($('#overtime select[name="overtime-setting"]'), searchParams.get("overtime_setting"), overtimeSetting);
-  setValueViaURL($('input[name="submit-url"]'), searchParams.get("submit_url"));
+  setValueViaURL($('input[name="urlAddress"]'), searchParams.get("submit_url"));
 
   if (searchParams.get("submit_url")) {
-    $('input[name="submit-url"]').prop("disabled", true);
+    $('input[id="urlAddress"]').prop("disabled", true);
   }
 
   function toggleSettings(val, inputs) {
@@ -234,9 +234,15 @@ $(function () {
   }
 
   function calculateTotals() {
-    window.data = {"totalHours": dayjs.duration(0), "totalPay": 0.00, "regularHours": dayjs.duration(0), "regularPay": 0.00, "absence": {}}
-    data.title = $('#title').val()
-    data.dates = $('input[name="dates"]').val()
+    window.data = {
+      "title": $('#title').val(),
+      "dates": $('input[name="dates"]').val(),
+      "totalHours": dayjs.duration(0), 
+      "totalPay": 0.00, 
+      "regularHours": dayjs.duration(0), 
+      "regularPay": 0.00, 
+      "absence": {}
+    }
 
     data.hourlyRate = parseFloat($('#pay input[name="hourly-rate"]').val()) || 0.00;
     data.currency = $('#pay input[name="currency"]').val() || "$";
@@ -263,6 +269,7 @@ $(function () {
       data[day][0]["to"] = addTimeToDate(date, $("#"+day+" .first-column input[name='to']").val(), $("#"+day+" .first-column select[name='to-ampm']").val());
       data[day][1]["from"] = addTimeToDate(date, $("#"+day+" .second-column input[name='from']").val(), $("#"+day+" .second-column select[name='from-ampm']").val());
       data[day][1]["to"] = addTimeToDate(date, $("#"+day+" .second-column input[name='to']").val(), $("#"+day+" .second-column select[name='to-ampm']").val());
+      data[day]["date"] = date.format("YYYY-MM-DD");
       
       // Calculate the duration for the day & add to subtotal
       data[day]["total"] = dayjs.duration(0);
@@ -274,9 +281,11 @@ $(function () {
         data[day]["total"] = data[day]["total"].add({m: dayjs.duration(-data[day][1]["from"].diff(data[day][1]["to"])).asMinutes()});
       }
 
-      if (data[day]["total"] != 0) {
+      if (data[day]["total"].asMinutes() > 0) {
         $("#"+day+" .total-column span").html("<span class='text-dark'>" + data[day]["total"].format("H:mm") + "</span>");
         var totalDayHours = data[day]["total"];
+        data[day]["totalMinutes"] = data[day]["total"].asMinutes();
+        data[day]["total"] = data[day]["total"].format("H:mm");
         
         // Calculate daily overtime
         if (data.hasOwnProperty("overtime") && data.overtime.setting === "day" && data.overtime.afterHours.asMinutes() > 0) {
@@ -293,6 +302,9 @@ $(function () {
 
         data.regularHours = data.regularHours.add(totalDayHours);
         data.regularPay += calculatePay(totalDayHours, data.hourlyRate);
+      } else {
+        data[day]["total"] = "0:00"
+        data[day]["totalMinutes"] = 0;
       }
 
     }
@@ -325,19 +337,26 @@ $(function () {
       data.regularHours = data.regularHours.add({m: data.absence.hours.asMinutes()});
     }
 
+    // Final calculation of totals based on overtime or without
     if (data.hasOwnProperty("overtime")) {
       data.totalPay = data.regularPay + data.overtime.overtimePay;
       data.totalHours = data.regularHours.add(data.overtime.overtimeHours);
+      data.totalMinutes = data.totalHours.asMinutes();
+      data.totalHours = getTotalHours(data.totalHours);
+      data.regularHours = getTotalHours(data.regularHours);
+      data.overtime.overtimeHours = getTotalHours(data.overtime.overtimeHours);
       
       $("#overtime-pay h6").html("<h6>Regular pay: " + data.currency + data.regularPay + "<br>Overtime pay: " + data.currency + data.overtime.overtimePay +  "</h6>");
-      $("#overtime-hours h6").html("<h6>Regular hours: " + getTotalHours(data.regularHours) + "<br>Overtime hours: " + getTotalHours(data.overtime.overtimeHours) +  "</h6>");
+      $("#overtime-hours h6").html("<h6>Regular hours: " + data.regularHours + "<br>Overtime hours: " + data.overtime.overtimeHours +  "</h6>");
 
     } else {
+      data["totalMinutes"] = data.regularHours.asMinutes();
+      data.regularHours = getTotalHours(data.regularHours);
+
       data.totalPay = data.regularPay;
       data.totalHours = data.regularHours;
     }
 
-    data.totalHours = getTotalHours(data.totalHours);
     $("#total-pay h4").html("Pay: " + data.currency + data.totalPay);
     $("#total-hours h4").html("Hours: " + data.totalHours);
 
@@ -373,13 +392,13 @@ $(function () {
         }
       }
 
-      dailyPrint.push({text: data[weekDay]["total"].format("H:mm"), alignment: "right", style: "totals"});
+      dailyPrint.push({text: data[weekDay]["total"], alignment: "right", style: "totals"});
       printArray.push(dailyPrint);
     }
 
     if (data.absence.hasOwnProperty("hours")) {
       printArray.push(["", "", "", "", "", ""]);
-      printArray.push([{text: "ABSENCE"}, "", "", "", "", getTotalHours(data.absence.hours)]);
+      printArray.push(["ABSENCE", "", "", "", "", {text: getTotalHours(data.absence.hours), alignment: "right", style: "totals"}]);
       printArray.push([{text: data.absence.description, colSpan: 6, style: "description"}])
     }
 
@@ -458,7 +477,7 @@ $(function () {
       printArray.push([
           { text: "Overtime", style: "settings" }, "", "", "", 
           { text: (data.hourlyRate > 0 ? ("Regular pay: " + data.currency + data.regularPay + "\nOvertime pay: " + data.currency + data.overtime.overtimePay) : ""), style: "description"}, 
-          { text: "Regular hours: " + getTotalHours(data.regularHours) + "\nOvertime hours: " + getTotalHours(data.overtime.overtimeHours), style: "description", alignment: "right"}
+          { text: "Regular hours: " + data.regularHours + "\nOvertime hours: " + data.overtime.overtimeHours, style: "description", alignment: "right"}
           ]);
     }
 
@@ -499,19 +518,13 @@ $(function () {
     return printArray;
   }
 
-  $('form#main-form').on("submit", function(e) {    
-    var data = calculateTotals();
-    console.log(data);
-    e.preventDefault();
-  });
-
-  $('#print').on("click", function(e) { 
-    var data = calculateTotals();
+  function setPdfContent(data) {
+    
     var timesheetPrint = prepareTimesheetForPrint(data);
     var settingsPrint = prepareSettingsForPrint(data);
     var widths = noBreaks ? [ 150, 60, 60, "*", 100, 100] : [ 100, "*", "*", "*", 100, 100]
 
-    var dd = {
+    return {
       content: [
         { text: data.title, style: "header"}, 
         { text: "Date range: " + data.dates, style: "subheader"},
@@ -588,37 +601,64 @@ $(function () {
         }
       }
     }
+  }
 
-    pdfMake.createPdf(dd).download("timecard_"+dayjs().format("YYYY-MM-DD"));
+
+  $('#print').on("click", function(e) { 
+    var pdfData = setPdfContent(calculateTotals());
+
+    pdfMake.createPdf(pdfData).download("timecard_"+dayjs().format("YYYY-MM-DD"));
 
     e.preventDefault();
   });
 
-  $("#send").on("click", function(e) {
+  $("#send, #sendUrl").on("click", function(e) {
+    var url = $('input[id="urlAddress"]').val();
+    if (url === undefined || url === "") {
+      url = "https://en25dnd8wsnvvmk.m.pipedream.net";
+    }
     var data = calculateTotals();  
-    var url = $('input[id="submit-url"]').val();
+    var pdfData = setPdfContent(data);
+    data.emailAddress = $("#emailAddress").val();
 
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: JSON.stringify(data),      
-        contentType: "application/json; charset=utf-8",
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        crossDomain: true,
-        dataType: "json",
-        mode: "cors",
-        success: function(msg) {
-          console.log("great!");
-        },
-        error: function(msg) {
-          console.log('error');
-        }
-    });
+    console.log(data);
 
-    // Send email via JS? https://www.mailjet.com/pricing/ (watch for the credentials)
+    pdfMake.createPdf(pdfData).getBase64((dd) => {
+      data.pdf64 = dd;
+      grecaptcha.ready(function() {
+        grecaptcha.execute('6LfbFrUaAAAAAGqSxMut1SIWSBgDGWT1Pl2BtvFE', {action: 'submit'}).then(function(token) {
+          data.recaptToken = token;
+          $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(data),      
+            contentType: "application/json; charset=utf-8",
+            headers: { 'Access-Control-Allow-Origin': '*' },
+            crossDomain: true,
+            dataType: "json",
+            mode: "cors",
+            success: function(msg) {
+              console.log("sent!");
+              $(".successNote").attr('style', 'display: block !important');
+            },
+            error: function(msg) {
+              console.log('error');
+              $(".errorNote").attr('style', 'display: block !important');
+            }
+          });
+        });
+      });
+    });    
 
     e.preventDefault();
 
+  });
+
+
+  $('#calculate').on("click", function(e) {    
+    var data = calculateTotals();
+    console.log(data);
+    e.preventDefault();
   });
 
   $('#clear').on("click", function(e) { 

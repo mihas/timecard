@@ -721,29 +721,84 @@
 
           <!-- TABLE ROW FOOTER - BUTTONS -->
 
-          <div class="row mt-5 justify-content-between">
-            <div class="col-md-4">
-              <div class="mb-2">
-                <div class="input-group mb-2">
-                  <span class="input-group-text">URL</span>
-                  <input type="text" class="form-control" name="submit-url" id="submit-url" placeholder="https://webhookurl.com/123446" value="">
-                </div>
-                <button type="" class="btn btn-outline-primary" id="send"><i class="bi bi-box-arrow-in-right"></i>&nbsp; Submit to URL</button>
-              </div>
+          <div class="row mt-4 justify-content-between">
+            <div class="col-md-5">
+              <!--<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#urlModal"><i class="bi bi-box-arrow-in-down-right"></i>&nbsp; Embed on your website</button>-->
+              <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#urlModal">Send to URL</button>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-6">
               <div class="row">
-                <div class="col-12">
+                <div class="col-6 col-lg-3">
                   <div class="d-grid">
-                    <button type="submit" class="btn btn-primary" id="calculate"><i class="bi bi-calculator"></i> Calculate</button>
+                    <button type="submit" class="btn btn-outline-primary" id="calculate"><i class="bi bi-calculator"></i> Calculate</button>
+                  </div>
+                </div>                
+                <div class="col-6 col-lg-3">
+                  <div class="d-grid">
+                    <button type="button" class="btn btn-outline-primary" id="sendEmail" data-bs-toggle="modal" data-bs-target="#emailModal"><i class="bi bi-envelope"></i>&nbsp; Send email</button>
                   </div>
                 </div>
-                <div class="col-12 mt-3">
+                <div class="col-6">
                   <div class="d-grid">
                     <button type="" class="btn btn-success" id="print"><i class="bi bi-file-earmark-arrow-down"></i> Download as PDF</button>
                   </div>
                 </div>
               </div>              
+            </div>
+          </div>
+          <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModal" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Send PDF via email</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-12 mb-2">
+                      <label for="emailAddress" class="form-label"><b>Email address</b></label>
+                      <input type="text" class="form-control" name="emailAddress" id="emailAddress" placeholder="" value="" autofocus>
+                      <input type="hidden" name="urlAddress" id="urlAddress" value="" autofocus>
+                    </div>
+                    <div class="col-md-12">
+                      <button type="button" class="btn btn-primary" id="send">Send email</button>
+                    </div>
+                    <div class="col-md-12 mt-3 d-none text-success successNote">
+                      <i class="bi bi-check2-circle"></i>&nbsp; Email sent!
+                    </div>
+                    <div class="col-md-12 mt-3 d-none text-danger errorNote">
+                      <i class="bi bi-exclamation-diamond"></i>&nbsp; There was a problem with your time card email!
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="urlModal" tabindex="-1" aria-labelledby="urlModal" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Send data to custom URL</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-12 mb-2">
+                      <label for="urlAddress" class="form-label"><b>URL address</b></label>
+                      <input type="text" class="form-control" name="urlAddress" id="urlAddress" placeholder="https://webhookurl.com/example" value="" autofocus>
+                    </div>
+                    <div class="col-md-12">
+                      <button type="button" class="btn btn-primary" id="sendUrl">Send to URL</button>
+                    </div>
+                    <div class="col-md-12 mt-3 d-none text-success successNote">
+                      <i class="bi bi-check2-circle"></i>&nbsp; Data sent!
+                    </div>
+                    <div class="col-md-12 mt-3 d-none text-danger errorNote">
+                      <i class="bi bi-exclamation-diamond"></i>&nbsp; There was a problem.
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </form>
@@ -759,6 +814,7 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfbFrUaAAAAAGqSxMut1SIWSBgDGWT1Pl2BtvFE"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
