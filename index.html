@@ -33,13 +33,13 @@
             </div>
             <div class="col-md-2">
               <div class="form-check form-switch mt-3 py-3">
-                <input class="form-check-input" type="checkbox" id="time-format" name="time-format">
+                <input class="form-check-input" type="checkbox" id="time-format" name="24h_format">
                 <label class="form-check-label" for="time-format">24h time format</label>
               </div>
             </div>
             <div class="col-md-2">
               <div class="form-check form-switch mt-3 py-3  ">
-                <input class="form-check-input" type="checkbox" id="break-setting" name="break-setting">
+                <input class="form-check-input" type="checkbox" id="break-setting" name="add_breaks">
                 <label class="form-check-label" for="break-setting">Add breaks</label>
               </div>
             </div>
@@ -585,7 +585,7 @@
           <div class="row">
             <div class="col-6">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="weekend-setting" name="weekend-setting">
+                <input class="form-check-input" type="checkbox" id="weekend-setting" name="show_weekend">
                 <label class="form-check-label" for="weekend-setting">Show weekend</label>
               </div>  
             </div>
@@ -607,7 +607,7 @@
               </div>
               <div class="input-group rate-hidden">
                 <input type="text" class="form-control " name="currency" placeholder="currency" value="$">
-                <input type="text" class="form-control w-50" name="hourly-rate" placeholder="50.0" value="">
+                <input type="text" class="form-control w-50" name="hourly_rate" placeholder="50.0" value="">
                 <span class="input-group-text">per hour</span>
               </div>
             </div>
@@ -644,12 +644,12 @@
                 </select>
               </div>
               <div class="input-group overtime-hidden mb-2">
-                <input type="text" class="form-control" name="rate-multiply" placeholder="times" value="1.5" style="max-width:60px">
+                <input type="text" class="form-control" name="overtime_rate_multiply" placeholder="times" value="1.5" style="max-width:60px">
                 <span class="input-group-text">x hourly rate, after </span>
-                <input type="text" class="form-control" name="after-hours" placeholder="8:00" value="8:00">
+                <input type="text" class="form-control" name="overtime_hours" placeholder="8:00" value="8:00">
               </div>
               <div class="overtime-hidden">
-                <select class="form-select w-100" name="overtime-setting">
+                <select class="form-select w-100" name="overtime_setting">
                   <option value="day" selected>hours per day</option>
                   <option value="week">hours per week</option>
                 </select>
@@ -682,12 +682,10 @@
           <!-- TABLE ROW FOOTER - TOTALS -->
 
           <div class="row table-row mt-3 border-top pt-4  pb-1 align-items-center" id="totals">   
-            <div class="col-2">
-                <h4>Total</h4>
-            </div>
-
             <div class="col-6">
-              
+              <h4>Total &nbsp;<a href="#" class="" id="calculate">Calculate</a></h4>
+            </div>
+            <div class="col-2">              
             </div>  
             <div class="col-md-2 text-end text-secondary" id="total-pay">
               <div class="rate-hidden justify-content-end">
@@ -730,7 +728,7 @@
               <div class="row">
                 <div class="col-6 col-xl-3 mt-3 mt-md-0">
                   <div class="d-grid">
-                    <button type="submit" class="btn btn-outline-primary" id="calculate"><i class="bi bi-calculator"></i> Calculate</button>
+                    <button type="submit" class="btn btn-outline-primary" id="bookmark"><i class="bi bi-bookmark-star"></i> Bookmark it</button>
                   </div>
                 </div>                
                 <div class="col-6 col-xl-3 mt-3 mt-md-0">
@@ -744,6 +742,29 @@
                   </div>
                 </div>
               </div>              
+            </div>
+          </div>
+          <div class="modal fade" id="bookmarkModal" tabindex="-1" aria-labelledby="bookmarkModal" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Bookmark the calculator</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-12 mb-2">
+                      <h5>Press <mark id="bookmark-shortcut"></mark>&nbsp;to bookmark the calculator.</h5>
+                      <label for="bookmarkUrl" class="form-label"><b>URL</b></label>
+                      <input type="text" class="form-control" name="bookmarkUrl" id="bookmarkUrl" placeholder="" value="" autofocus>
+                      <p class="form-text">Use the URL above and add it to your bookmarks. You can also share it with your colleagues.</p>
+                    </div>
+                    <div class="col-md-12">
+                      <!--<button type="button" class="btn btn-primary" id="send">Bookmark</button>-->
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModal" aria-hidden="true">
@@ -808,7 +829,7 @@
       <footer class="py-2">
         
         <div class="text-right">
-          <a href="https://myhours.com"><img class="d-block" src="my-hours-logo.png" alt="My Hours - Project Time tracking" width="24" height="25"></a>
+          <a href="https://myhours.com/free-time-card-calculator"><img class="d-block" src="my-hours-logo.png" alt="My Hours - Project Time tracking" width="24" height="25"></a>
         </div>
       </footer>
     </div>

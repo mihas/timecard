@@ -8,31 +8,38 @@ $(function () {
 
   // Set options based on pre-selected settings
 
-  var timeFormatSetting = $('input[id="time-format"]');
+  var timeFormatSetting = $('input[name="24h_format"]');
   var ampmSelectors = $('.ampm-select');
 
-  var descSetting = $('input[id="description-setting"]');
+  var descSetting = $('input[name="description-setting"]');
   var descInputs = $('.description-hidden');
 
-  var breakSetting = $('input[id="break-setting"]');
+  var breakSetting = $('input[name="add_breaks"]');
   var breakInputs = $('.second-column');
 
-  var weekendSetting = $('input[id="weekend-setting"]');
+  var weekendSetting = $('input[name="show_weekend"]');
   var weekendInputs = $('.weekend-hidden');
 
   
   // Set options based on URL parameters
   var searchParams = new URLSearchParams(window.location.search)
 
-  function setSettingsViaURL(setting, urlVal) {
-    if (urlVal === true) {
-      setting.prop("checked", urlVal);
+  
+  // Set rate & overtime via URL
+  function setValueViaURL(setting, urlVal, settingSelect=null) {
+    if (typeof(urlVal) === "string") {
+      setting.val(urlVal);
+      if (settingSelect != null) {
+        settingSelect.val("display").change();
+      }
+    } else if (urlVal === true) {
+        setting.prop("checked", urlVal);
     }
   }
 
-  setSettingsViaURL(timeFormatSetting, searchParams.get("24h_format") === "true");
-  setSettingsViaURL(breakSetting, searchParams.get("add_breaks") === "true");
-  setSettingsViaURL(weekendSetting, searchParams.get("show_weekend") === "true");
+  setValueViaURL(timeFormatSetting, searchParams.get("24h_format") === "true");
+  setValueViaURL(breakSetting, searchParams.get("add_breaks") === "true");
+  setValueViaURL(weekendSetting, searchParams.get("show_weekend") === "true");
   
 
   // Disable changing an input that is set via URL
@@ -106,21 +113,11 @@ $(function () {
   //var advancedSetting = $('select[id="advanced"]');
   //var advancedInputs = $('.advanced-hidden');
 
-  // Set rate & overtime via URL
-  function setValueViaURL(setting, urlVal, settingSelect=null) {
-    if (typeof(urlVal) === "string") {
-      setting.val(urlVal);
-      if (settingSelect != null) {
-        settingSelect.val("display").change();
-      }
-    }
-  }
-
-  setValueViaURL($('#pay input[name="hourly-rate"]'), searchParams.get("hourly_rate"), rateSetting);
+  setValueViaURL($('#pay input[name="hourly_rate"]'), searchParams.get("hourly_rate"), rateSetting);
   setValueViaURL($('#pay input[name="currency"]'), searchParams.get("currency"), rateSetting);
-  setValueViaURL($('#overtime input[name="after-hours"]'), searchParams.get("overtime_hours"), overtimeSetting);
-  setValueViaURL($('#overtime input[name="multiply"]'), searchParams.get("overtime_rate"), overtimeSetting);
-  setValueViaURL($('#overtime select[name="overtime-setting"]'), searchParams.get("overtime_setting"), overtimeSetting);
+  setValueViaURL($('#overtime input[name="overtime_hours"]'), searchParams.get("overtime_hours"), overtimeSetting);
+  setValueViaURL($('#overtime input[name="overtime_rate_multiply"]'), searchParams.get("overtime_rate_multiply"), overtimeSetting);
+  setValueViaURL($('#overtime select[name="overtime_setting"]'), searchParams.get("overtime_setting"), overtimeSetting);
   setValueViaURL($('input[name="urlAddress"]'), searchParams.get("submit_url"));
 
   if (searchParams.get("submit_url")) {
@@ -157,7 +154,49 @@ $(function () {
   });
   */
 
+  // Generate URL with all settings
+  function generateURL() {
+    let params = [];
+    let mainSettings = ["show_weekend", "add_breaks", "24h_format"]
+    let rateSettings = ["hourly_rate", "currency"]
+    let overtimeSettings = ["overtime_hours", "overtime_rate_multiply"];
 
+    for (var i = 0; i < mainSettings.length; i++) {
+      if ($("input[name='" + mainSettings[i] + "']").prop("checked") == true) {
+        params.push(mainSettings[i]+"=true");
+      }
+    }
+
+    if (rateSetting[0].value == "display") {
+      for (var i = 0; i < rateSettings.length; i++) {
+        params.push(rateSettings[i]+"="+$("input[name='" + rateSettings[i] + "']").val());
+      }
+    }
+
+    if (overtimeSetting[0].value == "display") {
+      for (var i = 0; i < overtimeSettings.length; i++) {
+        params.push(overtimeSettings[i]+"="+$("input[name='" + overtimeSettings[i] + "']").val());
+      }
+    }
+
+    return "?" + params.join("&");
+  }
+
+  var bookmarkModal = new bootstrap.Modal(document.getElementById('bookmarkModal'))
+
+  $("#bookmark").on("click", function(e) { 
+
+    let urlParams = generateURL();
+    let fullUrl = window.location.protocol + "//" +  window.location.host + window.location.pathname + urlParams;
+    $("#bookmarkUrl").val(fullUrl);
+    console.log(fullUrl);
+    $("#bookmark-shortcut").html(navigator.userAgent.toLowerCase().indexOf('mac') != - 1 ? 'Cmd + D' : 'CTRL + D');
+    bookmarkModal.show()
+    window.history.pushState('Bookmark', 'Time Card Caclulator | My Hours', fullUrl);
+
+
+    e.preventDefault();
+  });
 
   // Init Datepicker
 
@@ -244,15 +283,15 @@ $(function () {
       "absence": {}
     }
 
-    data.hourlyRate = parseFloat($('#pay input[name="hourly-rate"]').val()) || 0.00;
+    data.hourlyRate = parseFloat($('#pay input[name="hourly_rate"]').val()) || 0.00;
     data.currency = $('#pay input[name="currency"]').val() || "$";
 
     // Get overtime settings
     if ($('#overtime select[name="overtime"]').val() === "display") {
       data.overtime = {"overtimeHours" : dayjs.duration(0), "overtimePay": 0.00}
-      data.overtime.afterHours = parseDuration($('#overtime input[name="after-hours"]').val());
-      data.overtime.setting = $('#overtime select[name="overtime-setting"]').val();
-      data.overtime.multiply = parseFloat($('#overtime input[name="rate-multiply"]').val());
+      data.overtime.afterHours = parseDuration($('#overtime input[name="overtime_hours"]').val());
+      data.overtime.setting = $('#overtime select[name="overtime_setting"]').val();
+      data.overtime.multiply = parseFloat($('#overtime input[name="overtime_rate_multiply"]').val());
     }
 
     for (var i = 0; i < 7; i++) {
@@ -290,7 +329,6 @@ $(function () {
         // Calculate daily overtime
         if (data.hasOwnProperty("overtime") && data.overtime.setting === "day" && data.overtime.afterHours.asMinutes() > 0) {
           var diff = totalDayHours.subtract(data.overtime.afterHours);
-          console.log(diff.asHours());
           if (diff.asMinutes() > 0) {
             // In case of overtime for the given day, calculate properly.
             totalDayHours = totalDayHours.subtract(diff);
@@ -362,6 +400,12 @@ $(function () {
 
     return data;
   }
+
+  
+  // Calculate totals when inputs change
+  $(".first-column input, .second-column input, .first-column select, .second-column select, .row.settings input, .row.settings select").change(function() {
+    calculateTotals();
+  });
 
   function prepareTimesheetForPrint(data) {
     var timeFormat = "h:mm a"
@@ -480,8 +524,6 @@ $(function () {
           { text: "Regular hours: " + data.regularHours + "\nOvertime hours: " + data.overtime.overtimeHours, style: "description", alignment: "right"}
           ]);
     }
-
-    console.log(printArray);
 
     return printArray;
   }
@@ -621,7 +663,6 @@ $(function () {
     var pdfData = setPdfContent(data);
     data.emailAddress = $("#emailAddress").val();
 
-    console.log(data);
 
     pdfMake.createPdf(pdfData).getBase64((dd) => {
       data.pdf64 = dd;
@@ -657,7 +698,6 @@ $(function () {
 
   $('#calculate').on("click", function(e) {    
     var data = calculateTotals();
-    console.log(data);
     e.preventDefault();
   });
 

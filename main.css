@@ -48,6 +48,12 @@ input.description {
 	
 }
 
+a#calculate {
+	font-size: 1rem;
+	font-weight: 400;
+	text-decoration: none;
+}
+
 .form-check-input {
 	margin-top:0.35rem;
 }
