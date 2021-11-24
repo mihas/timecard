@@ -696,7 +696,6 @@ $(function () {
               type: "POST",
               url: url,
               data: JSON.stringify(data),      
-              contentType: "application/json; charset=utf-8",
               headers: { 'Access-Control-Allow-Origin': '*' },
               crossDomain: true,
               dataType: "json",
