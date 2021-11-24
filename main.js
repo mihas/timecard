@@ -154,7 +154,8 @@ $(function () {
   });
   */
 
-  // Generate URL with all settings
+  // Generate URL with all settings for bookmarking & iframe
+
   function generateURL() {
     let params = [];
     let mainSettings = ["show_weekend", "add_breaks", "24h_format"]
@@ -179,7 +180,11 @@ $(function () {
       }
     }
 
-    return "?" + params.join("&");
+    if (params.length > 0) {
+      return "?" + params.join("&");  
+    }
+
+    return "" ;
   }
 
   var bookmarkModal = new bootstrap.Modal(document.getElementById('bookmarkModal'))
@@ -189,14 +194,28 @@ $(function () {
     let urlParams = generateURL();
     let fullUrl = window.location.protocol + "//" +  window.location.host + window.location.pathname + urlParams;
     $("#bookmarkUrl").val(fullUrl);
-    console.log(fullUrl);
+    $("#bookmark-title").html()
     $("#bookmark-shortcut").html(navigator.userAgent.toLowerCase().indexOf('mac') != - 1 ? 'Cmd + D' : 'CTRL + D');
     bookmarkModal.show()
     window.history.pushState('Bookmark', 'Time Card Caclulator | My Hours', fullUrl);
-
+    iniFrame()
 
     e.preventDefault();
   });
+
+  // Function to check whether this window is rendered in an iFrame
+
+  function iniFrame() {
+    if ( window.location !== window.parent.location )
+    {      
+        console.log("The page is in an iFrame");
+        return true;
+    } 
+    else {
+        console.log("The page is not in an iFrame");
+        return false;
+    }
+}
 
   // Init Datepicker
 
@@ -655,41 +674,46 @@ $(function () {
   });
 
   $("#send, #sendUrl").on("click", function(e) {
-    var url = $('input[id="urlAddress"]').val();
-    if (url === undefined || url === "") {
+    var url = $('#urlAddress').val();
+    console.log("url: " + url);
+    var emailAddress = $("#emailAddress").val();
+    if ((url === undefined || url === "") && emailAddress != "")  {
       url = "https://en25dnd8wsnvvmk.m.pipedream.net";
     }
-    var data = calculateTotals();  
-    var pdfData = setPdfContent(data);
-    data.emailAddress = $("#emailAddress").val();
+
+    if (url != "") {
+      var data = calculateTotals();  
+      var pdfData = setPdfContent(data);
+      data.emailAddress = emailAddress
 
 
-    pdfMake.createPdf(pdfData).getBase64((dd) => {
-      data.pdf64 = dd;
-      grecaptcha.ready(function() {
-        grecaptcha.execute('6LfbFrUaAAAAAGqSxMut1SIWSBgDGWT1Pl2BtvFE', {action: 'submit'}).then(function(token) {
-          data.recaptToken = token;
-          $.ajax({
-            type: "POST",
-            url: url,
-            data: JSON.stringify(data),      
-            contentType: "application/json; charset=utf-8",
-            headers: { 'Access-Control-Allow-Origin': '*' },
-            crossDomain: true,
-            dataType: "json",
-            mode: "cors",
-            success: function(msg) {
-              console.log("sent!");
-              $(".successNote").attr('style', 'display: block !important');
-            },
-            error: function(msg) {
-              console.log('error');
-              $(".errorNote").attr('style', 'display: block !important');
-            }
+      pdfMake.createPdf(pdfData).getBase64((dd) => {
+        data.pdf64 = dd;
+        grecaptcha.ready(function() {
+          grecaptcha.execute('6LfbFrUaAAAAAGqSxMut1SIWSBgDGWT1Pl2BtvFE', {action: 'submit'}).then(function(token) {
+            data.recaptToken = token;
+            $.ajax({
+              type: "POST",
+              url: url,
+              data: JSON.stringify(data),      
+              contentType: "application/json; charset=utf-8",
+              headers: { 'Access-Control-Allow-Origin': '*' },
+              crossDomain: true,
+              dataType: "json",
+              mode: "cors",
+              success: function(msg) {
+                console.log("sent!");
+                $(".successNote").attr('style', 'display: block !important');
+              },
+              error: function(msg) {
+                console.log('error');
+                $(".errorNote").attr('style', 'display: block !important');
+              }
+            });
           });
         });
-      });
-    });    
+      });    
+    }
 
     e.preventDefault();
 
